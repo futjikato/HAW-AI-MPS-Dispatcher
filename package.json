@@ -1,0 +1,7 @@
+{
+  "name": "HAW-AI-Dispatcher",
+  "version": "0.0.1",
+  "dependencies": {
+    "socket.io": "^1.0.2"
+  }
+}

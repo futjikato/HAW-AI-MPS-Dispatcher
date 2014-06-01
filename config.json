@@ -1,0 +1,8 @@
+{
+    "instances": [
+        {
+            "host" : "localhost",
+            "port" : "8089"
+        }
+    ]
+}
