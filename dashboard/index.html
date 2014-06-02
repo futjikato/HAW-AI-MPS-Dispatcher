@@ -18,12 +18,20 @@
                     <h2>- - -</h2>
                 </div>
                 <div class="col-md-9">
-                    
+                    <h3 id="ping-headline"></h3>
                 </div>
             </div>
         </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script src="http://localhost:8078/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io('http://localhost:8078/monitor');
+            socket.on('ping', function (data) {
+                $('#ping-headline').text(data.headline);
+            });
+        </script>
     </body>
 </html>

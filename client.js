@@ -71,11 +71,11 @@
         var start = Date.now(),
             $this = this;
 
-        this.send('ping', []);
+        $this.send('ping', []);
 
-        this.once('req.pong', function() {
+        $this.once('req.pong', function() {
             $this.lastPing = Date.now() - start;
-            console.log('ping', $this.lastPing);
+            $this.emit('msg.ping', {ping: $this.lastPing});
         });
     };
 

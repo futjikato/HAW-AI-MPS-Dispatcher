@@ -16,7 +16,13 @@ var monitor = io.of('/monitor'),
     mps = io.of('/mps');
 
 monitor.on('connection', function (socket) {
-
+    instances.forEach(function(client) {
+        client.on('msg.ping', function(data) {
+            socket.emit('ping', {
+                headline: data.ping
+            });
+        });
+    });
 });
 
 mps.on('connection', function (socket) {
