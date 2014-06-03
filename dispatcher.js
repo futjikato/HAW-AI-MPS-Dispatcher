@@ -32,6 +32,14 @@ monitor.on('connection', function (socket) {
                 load : data.load
             });
         });
+
+        // emit req count
+        client.on('msg.reqcount', function(data) {
+            socket.emit('reqcount', {
+                id: client.getId(),
+                count : data.count
+            });
+        });
     });
 });
 

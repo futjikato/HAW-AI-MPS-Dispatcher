@@ -101,16 +101,22 @@
         });
 
         // ping
-			$this.lastPing = -1;
-			setInterval(function() {
-            $this.ping();
-			}, options.pinginterval);
+        $this.lastPing = -1;
+        setInterval(function() {
+        $this.ping();
+        }, options.pinginterval);
 
-			// load avg
-			$this.lastLoadAvg = 0;
-			setInterval(function() {
+        // load avg
+        $this.lastLoadAvg = 0;
+        setInterval(function() {
             $this.avgLoad();
-			}, options.loadinterval);
+        }, options.loadinterval);
+
+        // request counter
+        $this.lastReqCount = 0;
+        setInterval(function() {
+            $this.reqCount();
+        }, options.loadinterval);
     }
     util.inherits(Client, events.EventEmitter);
 
@@ -133,6 +139,16 @@
 
         $this.once('req.0.load', function(response) {
             $this.emit('msg.load', {load: response.params[0]});
+        });
+    };
+
+    Client.prototype.reqCount = function() {
+        var $this = this;
+
+        $this.send(0, 'REQCOUNT', []);
+
+        $this.once('req.0.reqcount', function(response) {
+            $this.emit('msg.reqcount', {count: response.params[0]});
         });
     };
 

@@ -15,6 +15,7 @@
             instances.push(id);
             window.pingmod.add(id);
             window.loadmod.add(id);
+            window.reqmod.add(id);
             $('#system-list').append('<li>' + id + '</li>');
         }
     }
@@ -30,5 +31,11 @@
         addInstance(data.id);
         console.log(data);
         window.loadmod.addLoad(data.id, data.load);
+    });
+
+    socket.on('reqcount', function (data) {
+        addInstance(data.id);
+        console.log(data);
+        window.reqmod.addCount(data.id, data.count);
     });
 })($);
