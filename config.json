@@ -7,12 +7,17 @@
         {
             "id" : "Base 01",
             "host" : "localhost",
-            "port" : "8089"
+            "port" : "12342"
+        },
+		{
+            "id" : "Base 02",
+            "host" : "localhost",
+            "port" : "12344"
         },
         {
             "id" : "Instance 02",
             "host" : "localhost",
-            "port" : "8088"
+            "port" : "12343"
         }
     ]
 }
