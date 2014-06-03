@@ -1,12 +1,18 @@
 {
     "options" : {
-        "pinginterval" : "2000"
+        "pinginterval" : "2000",
+        "loadinterval" : "5000"
     },
     "instances": [
         {
             "id" : "Base 01",
             "host" : "localhost",
             "port" : "8089"
+        },
+        {
+            "id" : "Instance 02",
+            "host" : "localhost",
+            "port" : "8088"
         }
     ]
 }

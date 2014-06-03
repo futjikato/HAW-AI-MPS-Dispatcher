@@ -18,12 +18,19 @@ var monitor = io.of('/monitor'),
 
 monitor.on('connection', function (socket) {
     instances.forEach(function(client) {
-
         // emit ping for instance
         client.on('msg.ping', function(data) {
             socket.emit('ping', {
                 id: client.getId(),
                 ping: data.ping
+            });
+        });
+
+        // emit svg load
+        client.on('msg.load', function(data) {
+            socket.emit('load', {
+                id: client.getId(),
+                load : data.load
             });
         });
     });

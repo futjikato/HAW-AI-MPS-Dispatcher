@@ -33,6 +33,10 @@
                 response.name = name;
             }
 
+            // read user ID
+            var userId = buf.readInt32BE(offset);
+            offset += 4;
+
             // read parameter count
             var paramCount = buf.readInt32BE(offset);
             offset += 4;
@@ -49,13 +53,9 @@
             }
             response.params = params;
 
-            if(response.name) {
-                console.log('received response', response.name);
-                $this.emit('req.' + response.name.toLowerCase(), response);
-            } else {
-                console.log('received response', response);
-                $this.emit('req.anonym', response);
-            }
+            var emitMsg = 'req.' + (userId ? userId : '0') + '.' + (response.name ? response.name : 'anonymous');
+            console.log('emit', emitMsg);
+            $this.emit(emitMsg, response);
         });
 
         // ping
@@ -63,6 +63,12 @@
         setInterval(function() {
             $this.ping();
         }, options.pinginterval);
+
+        // load avg
+        $this.lastLoadAvg = 0;
+        setInterval(function() {
+            $this.avgLoad();
+        }, options.loadinterval);
     }
     util.inherits(Client, events.EventEmitter);
 
@@ -70,11 +76,22 @@
         var start = Date.now(),
             $this = this;
 
-        $this.send(0, 'ping', []);
+        $this.send(0, 'PING', []);
 
-        $this.once('req.pong', function() {
+        $this.once('req.0.pong', function() {
             $this.lastPing = Date.now() - start;
             $this.emit('msg.ping', {ping: $this.lastPing});
+        });
+    };
+
+    Client.prototype.avgLoad = function() {
+        var $this = this;
+
+        $this.send(0, 'LOAD', []);
+
+        $this.once('req.0.load', function(response) {
+            console.log(response.params);
+            $this.emit('msg.load', {load: response.params[0]});
         });
     };
 

@@ -1,11 +1,11 @@
 (function(window) {
     'use strict';
 
-    var container = $('#module-container-ping');
+    var container = $('#module-container-load');
 
     container.highcharts({
         title: {
-            text: 'Ping overview'
+            text: 'Load overview'
         },
         xAxis: {
             type: 'datetime',
@@ -13,7 +13,7 @@
         },
         yAxis: {
             title: {
-                text: 'ms',
+                text: 'load',
                 align: 'high'
             },
             min: 0,
@@ -28,19 +28,19 @@
     });
     var api = container.highcharts();
 
-    window.pingmod = {
+    window.loadmod = {
         add : function(id) {
             return api.addSeries({data: [], name: id});
         },
 
-        addPing : function(id, pingVal) {
+        addLoad : function(id, loadVal) {
             $.each(api.series, function(i, ser) {
                 if(ser.name == id) {
                     var shift = false;
                     if(ser.data.length > 10) {
                         shift = true;
                     }
-                    ser.addPoint([Date.now(), pingVal], true, shift);
+                    ser.addPoint([Date.now(), parseFloat(loadVal)], true, shift);
                 }
             });
         }

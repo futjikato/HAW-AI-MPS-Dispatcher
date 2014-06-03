@@ -1,4 +1,4 @@
-(function() {
+(function($) {
     'use strict';
 
     var instances = [];
@@ -14,13 +14,21 @@
         if(!found) {
             instances.push(id);
             window.pingmod.add(id);
+            window.loadmod.add(id);
+            $('#system-list').append('<li>' + id + '</li>');
         }
     }
 
     var socket = io('http://localhost:8078/monitor');
     socket.on('ping', function (data) {
         addInstance(data.id);
-        console.log('add ping node', data);
+        console.log(data);
         window.pingmod.addPing(data.id, data.ping);
     });
-})();
+
+    socket.on('load', function (data) {
+        addInstance(data.id);
+        console.log(data);
+        window.loadmod.addLoad(data.id, data.load);
+    });
+})($);
