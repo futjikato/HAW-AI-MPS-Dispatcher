@@ -56,7 +56,7 @@
             response.params = params;
 
             var emitMsg = 'req.' + (userId ? userId : '0') + '.' + (response.name ? response.name : 'anonymous');
-            console.log('received response', emitMsg);
+            console.log('[' + $this.client.remotePort + ']', 'received response', emitMsg);
             $this.emit(emitMsg, response);
             emitMsg = 'user.' + (userId ? userId : '0');
             $this.emit(emitMsg, response);

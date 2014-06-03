@@ -35,11 +35,24 @@ monitor.on('connection', function (socket) {
     });
 });
 
-var currUserId = 0;
+var currUserId = 0,
+    lastSendIndex = 0;
 
 function roundRobinSend(userid, action, params) {
-    // todo round robin implementation
-    instances[0].send(userid, action, params);
+
+    function inc() {
+        lastSendIndex++;
+        if(lastSendIndex >= instances.length) {
+            lastSendIndex = 0;
+        }
+    }
+
+    while(!instances[lastSendIndex].ready) {
+        inc();
+    }
+
+    instances[lastSendIndex].send(userid, action, params);
+    inc();
 }
 
 mps.on('connection', function (socket) {
