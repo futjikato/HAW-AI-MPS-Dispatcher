@@ -5,12 +5,12 @@
         util = require("util"),
         events = require("events");
 
-    function Client(opts) {
+    function Client(connection, options) {
         var $this = this;
         events.EventEmitter.call($this);
-        $this.opts = opts;
         $this.ready = false;
-        $this.client = net.connect(opts.port, opts.host, function() {
+        $this.id = connection.id;
+        $this.client = net.connect(connection.port, connection.host, function() {
             $this.ready = true;
         });
 
@@ -49,12 +49,11 @@
             }
             response.params = params;
 
-
             if(response.name) {
-                console.log('emit', response.name);
-                $this.emit('req.' + response.name.toLowerCase());
+                console.log('received response', response.name);
+                $this.emit('req.' + response.name.toLowerCase(), response);
             } else {
-                console.log('emit anonym action');
+                console.log('received response', response);
                 $this.emit('req.anonym', response);
             }
         });
@@ -63,7 +62,7 @@
         $this.lastPing = -1;
         setInterval(function() {
             $this.ping();
-        }, 5000);
+        }, options.pinginterval);
     }
     util.inherits(Client, events.EventEmitter);
 
@@ -71,7 +70,7 @@
         var start = Date.now(),
             $this = this;
 
-        $this.send('ping', []);
+        $this.send(0, 'ping', []);
 
         $this.once('req.pong', function() {
             $this.lastPing = Date.now() - start;
@@ -79,7 +78,7 @@
         });
     };
 
-    Client.prototype.send = function(action, params) {
+    Client.prototype.send = function(user, action, params) {
         var buf = new Buffer(2048),
             offset = 0;
 
@@ -90,17 +89,30 @@
             return offset + 4 + val.length;
         }
 
+        // write action name
         offset = writeStr(action, 0);
 
+        // write user identification
+        buf.writeInt32BE(user, offset);
+        offset += 4;
+
+        // write parameter count
         buf.writeInt32BE(params.length, offset);
         offset += 4;
 
+        // write parameters
         params.forEach(function(paramStr) {
             offset = writeStr(paramStr, offset);
         });
 
         var sendBuffer = buf.slice(0, offset);
+
+        console.log('send request', action);
         this.client.write(sendBuffer);
+    };
+
+    Client.prototype.getId = function() {
+        return this.id;
     };
 
     module.exports = {

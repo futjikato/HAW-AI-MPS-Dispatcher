@@ -4,11 +4,12 @@ var fs = require('fs'),
 
 // config
 var config = JSON.parse(fs.readFileSync('config.json')),
-    instances = [];
+    instances = [],
+    clientId = 1;
 
 // establish connection to server instances
 config.instances.forEach(function(clientObj) {
-    instances.push(new Client(clientObj));
+    instances.push(new Client(clientObj, config.options));
 });
 
 // get ready for user
@@ -17,9 +18,12 @@ var monitor = io.of('/monitor'),
 
 monitor.on('connection', function (socket) {
     instances.forEach(function(client) {
+
+        // emit ping for instance
         client.on('msg.ping', function(data) {
             socket.emit('ping', {
-                headline: data.ping
+                id: client.getId(),
+                ping: data.ping
             });
         });
     });

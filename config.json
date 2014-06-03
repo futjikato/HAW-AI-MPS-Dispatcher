@@ -1,6 +1,10 @@
 {
+    "options" : {
+        "pinginterval" : "2000"
+    },
     "instances": [
         {
+            "id" : "Base 01",
             "host" : "localhost",
             "port" : "8089"
         }

@@ -15,10 +15,19 @@
 
             <div class="row">
                 <div class="col-md-3">
-                    <h2>- - -</h2>
+                    <h3>Navigation</h3>
+                    <nav id="nav">
+                        <ul>
+                            <li>
+                                <a href="#overall">System Overview</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div class="col-md-9">
-                    <h3 id="ping-headline"></h3>
+                <div class="page overall">
+                    <div class="col-md-9">
+                        <div id="module-container-ping"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -26,12 +35,11 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
+        <script src="highcharts.js"></script>
+
+        <script src="module.ping.js"></script>
+
         <script src="http://localhost:8078/socket.io/socket.io.js"></script>
-        <script>
-            var socket = io('http://localhost:8078/monitor');
-            socket.on('ping', function (data) {
-                $('#ping-headline').text(data.headline);
-            });
-        </script>
+        <script src="main.js"></script>
     </body>
 </html>
