@@ -35,6 +35,7 @@
 
             // read user ID
             var userId = buf.readInt32BE(offset);
+            response.userid = userId;
             offset += 4;
 
             // read parameter count
@@ -44,18 +45,28 @@
             var params = [];
             for(var i = 0 ; i < paramCount ; i++) {
                 // get length, start and end of string
-                var strLength = buf.readInt32BE(offset + (i * 4));
-                var strStart = offset + (i * 4) + 4;
-                var strEnd = strStart + strLength;
+                var strLength = buf.readInt32BE(offset);
+                offset += 4;
 
                 // read string
-                params.push(buf.toString('utf8', strStart, strEnd));
+                params.push(buf.toString('utf8', offset, offset + strLength));
+
+                offset += strLength;
             }
             response.params = params;
 
             var emitMsg = 'req.' + (userId ? userId : '0') + '.' + (response.name ? response.name : 'anonymous');
-            console.log('emit', emitMsg);
+            console.log('received response', emitMsg);
             $this.emit(emitMsg, response);
+            emitMsg = 'user.' + (userId ? userId : '0');
+            $this.emit(emitMsg, response);
+            emitMsg = 'act.' + (response.name ? response.name : 'anonymous');
+            $this.emit(emitMsg, response);
+
+            if(response.statusCode != 200) {
+                emitMsg = 'err.' + userId;
+                $this.emit(emitMsg, response);
+            }
         });
 
         // ping
@@ -90,7 +101,6 @@
         $this.send(0, 'LOAD', []);
 
         $this.once('req.0.load', function(response) {
-            console.log(response.params);
             $this.emit('msg.load', {load: response.params[0]});
         });
     };

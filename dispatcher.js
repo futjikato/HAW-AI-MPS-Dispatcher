@@ -4,8 +4,7 @@ var fs = require('fs'),
 
 // config
 var config = JSON.parse(fs.readFileSync('config.json')),
-    instances = [],
-    clientId = 1;
+    instances = [];
 
 // establish connection to server instances
 config.instances.forEach(function(clientObj) {
@@ -36,6 +35,76 @@ monitor.on('connection', function (socket) {
     });
 });
 
-mps.on('connection', function (socket) {
+var currUserId = 0;
 
+function roundRobinSend(userid, action, params) {
+    // todo round robin implementation
+    instances[0].send(userid, action, params);
+}
+
+mps.on('connection', function (socket) {
+    var userId = ++currUserId;
+
+    socket.on('customers init', function() {
+        roundRobinSend(userId, 'GET_CUSTOMERS', []);
+    });
+    socket.on('offers init', function() {
+        roundRobinSend(userId, 'GET_OFFERS', []);
+    });
+
+    socket.on('customer new', function(data) {
+        roundRobinSend(userId, 'NEW_CUSTOMER', [data.name]);
+    });
+
+    instances.forEach(function(client) {
+
+        client.on('err.' + userId, function(response) {
+            console.error(response.params[0]);
+        });
+
+        client.on('req.' + userId + '.customers', function(response) {
+
+            var customers = [];
+            for(var i = 0 ; i < response.params.length ; i+=2) {
+                customers.push({
+                    id: response.params[i],
+                    name: response.params[i+1]
+                });
+            }
+
+            console.log('send customer list', customers);
+            socket.emit('customers', {
+                customers: customers
+            });
+        });
+
+        client.on('req.' + userId + '.offers', function(response) {
+
+            var offers = [];
+            for(var i = 0 ; i < response.params.length ; i+=4) {
+                offers.push({
+                    id: response.params[i],
+                    customer: response.params[i+1],
+                    element: response.params[i+2],
+                    order: response.params[i+3]
+                });
+            }
+
+            console.log('send offer list', offers);
+            socket.emit('offers', {
+                offers: offers
+            });
+        });
+
+        client.on('act.new_customer', function(response) {
+            socket.emit('customer', {
+                customer: {
+                    id: response.params[0],
+                    name: response.params[1]
+                }
+            });
+        });
+    });
+
+    socket.emit('ready');
 });

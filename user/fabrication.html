@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MPS Call Center</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid">
+    <h1>MPS Call Center</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            <h3>Rolls</h3>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="callcenter.html#customer">Call Center</a>
+                        <ul>
+                            <li>
+                                <a href="callcenter.html#customer">Customers</a>
+                            </li>
+                            <li>
+                                <a href="callcenter.html#offers">Offers</a>
+                            </li>
+                            <li>
+                                <a href="callcenter.html#orders">Orders</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="fabrication.html#elements">Fabrication</a>
+                        <ul>
+                            <li>
+                                <a href="fabrication.html#elements">Elements</a>
+                            </li>
+                            <li>
+                                <a href="fabrication.html#orders">Assembly Orders</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="pages "></div>
+        <div class="col-md-9">
+            <h1>Call Center View</h1>
+            <p>Chose one of the detailed views</p>
+        </div>
+    </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+<script src="http://localhost:8078/socket.io/socket.io.js"></script>
+<script src="main_callcenter.js"></script>
+</body>
+</html>
