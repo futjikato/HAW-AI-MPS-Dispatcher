@@ -2,13 +2,18 @@
     'use strict';
 
     var offerTable = $('#offer-table'),
-        offerForm = $('#new-customer'), // todo set correct id
+        offerForm = $('#new-offer'),
         socket = null;
 
     offerForm.on('submit', function(e) {
         e.preventDefault();
 
-        // todo implement
+        var data = {
+            customer: $(this).find('input[name="customer"]').val(),
+            element: $(this).find('input[name="element"]').val()
+        };
+
+        socket.emit('offer new', data);
     });
 
     window.offermod = {

@@ -15,10 +15,12 @@
 
     socket.on('customer', function (data) {
         console.log(data);
-        window.customermod.addCustomer({
-            name : data.customer.name,
-            id : data.customer.id
-        });
+        window.customermod.addCustomer(data.customer);
+    });
+
+    socket.on('offer', function (data) {
+        console.log(data);
+        window.offermod.addOffer(data.offer);
     });
 
     socket.once('ready', function() {

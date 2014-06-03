@@ -55,6 +55,9 @@ mps.on('connection', function (socket) {
     socket.on('customer new', function(data) {
         roundRobinSend(userId, 'NEW_CUSTOMER', [data.name]);
     });
+    socket.on('offer new', function(data) {
+        roundRobinSend(userId, 'NEW_CUSTOMER', [data.name]);
+    });
 
     instances.forEach(function(client) {
 
@@ -101,6 +104,17 @@ mps.on('connection', function (socket) {
                 customer: {
                     id: response.params[0],
                     name: response.params[1]
+                }
+            });
+        });
+
+        client.on('act.new_offer', function(response) {
+            socket.emit('offer', {
+                offer: {
+                    id: response.params[0],
+                    customer: response.params[1],
+                    element: response.params[2],
+                    order: -1
                 }
             });
         });
