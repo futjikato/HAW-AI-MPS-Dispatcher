@@ -56,7 +56,7 @@ mps.on('connection', function (socket) {
         roundRobinSend(userId, 'NEW_CUSTOMER', [data.name]);
     });
     socket.on('offer new', function(data) {
-        roundRobinSend(userId, 'NEW_CUSTOMER', [data.name]);
+        roundRobinSend(userId, 'NEW_OFFER', [data.customer, data.element]);
     });
 
     instances.forEach(function(client) {
