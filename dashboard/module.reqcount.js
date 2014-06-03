@@ -13,7 +13,7 @@
         },
         yAxis: {
             title: {
-                text: 'amount',
+                text: 'a',
                 align: 'high'
             },
             min: 0,
@@ -40,7 +40,7 @@
                     if(ser.data.length > 10) {
                         shift = true;
                     }
-                    ser.addPoint([Date.now(), countVal], true, shift);
+                    ser.addPoint([Date.now(), parseInt(countVal)], true, shift);
                 }
             });
         }
