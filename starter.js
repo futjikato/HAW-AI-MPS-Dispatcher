@@ -1,7 +1,7 @@
 var spawn = require('child_process').spawn;
 	
 function start(port, path) {
-    var java = spawn('java', ['Main.class', port], {cwd: path});
+    var java = spawn('java', ['-jar', 'HAW-AI-MPS.jar', port]);//, {cwd: path});
 	
 	java.stdout.on('data', function (data) {
 		console.log('stdout' + port + ': ' + data);

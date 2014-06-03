@@ -12,7 +12,38 @@
         $this.id = connection.id;
         $this.client = net.connect(connection.port, connection.host, function() {
             $this.ready = true;
+			// // ping
+			// $this.lastPing = -1;
+			// setInterval(function() {
+            // $this.ping();
+			// }, options.pinginterval);
+
+			// // load avg
+			// $this.lastLoadAvg = 0;
+			// setInterval(function() {
+            // $this.avgLoad();
+			// }, options.loadinterval);
         });
+		
+		$this.client.on('error', function(){
+			// setTimeout(function(){
+				// $this.client = net.connect(connection.port, connection.host, function() {
+					// $this.ready = true;
+					// // ping
+					// $this.lastPing = -1;
+					// setInterval(function() {
+					// $this.ping();
+					// }, options.pinginterval);
+
+					// // load avg
+					// $this.lastLoadAvg = 0;
+					// setInterval(function() {
+					// $this.avgLoad();
+					// }, options.loadinterval);
+				// });
+			// }, 10000);
+			// require('./starter').start(connection.port, options.mainpath)
+		});
 
         $this.client.on('data', function(buf) {
             var response = {},
@@ -70,16 +101,16 @@
         });
 
         // ping
-        $this.lastPing = -1;
-        setInterval(function() {
+			$this.lastPing = -1;
+			setInterval(function() {
             $this.ping();
-        }, options.pinginterval);
+			}, options.pinginterval);
 
-        // load avg
-        $this.lastLoadAvg = 0;
-        setInterval(function() {
+			// load avg
+			$this.lastLoadAvg = 0;
+			setInterval(function() {
             $this.avgLoad();
-        }, options.loadinterval);
+			}, options.loadinterval);
     }
     util.inherits(Client, events.EventEmitter);
 
