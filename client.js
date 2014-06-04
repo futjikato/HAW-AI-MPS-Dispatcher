@@ -116,7 +116,7 @@
         $this.lastReqCount = 0;
         setInterval(function() {
             $this.reqCount();
-        }, options.loadinterval);
+        }, options.reqcountinterval);
     }
     util.inherits(Client, events.EventEmitter);
 

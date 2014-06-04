@@ -1,7 +1,8 @@
 {
     "options" : {
         "pinginterval" : "2000",
-        "loadinterval" : "5000"
+        "loadinterval" : "5000",
+        "reqcountinterval" : "3000"
     },
     "instances": [
         {
