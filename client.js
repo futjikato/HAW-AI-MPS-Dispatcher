@@ -86,16 +86,17 @@
             }
             response.params = params;
 
-            var emitMsg = 'req.' + (userId ? userId : '0') + '.' + (response.name ? response.name : 'anonymous');
-            console.log('[' + $this.client.remotePort + ']', 'received response', emitMsg);
-            $this.emit(emitMsg, response);
-            emitMsg = 'user.' + (userId ? userId : '0');
-            $this.emit(emitMsg, response);
-            emitMsg = 'act.' + (response.name ? response.name : 'anonymous');
-            $this.emit(emitMsg, response);
-
             if(response.statusCode != 200) {
+                console.log('[' + this.client.remotePort + ']', 'received error', response);
                 emitMsg = 'err.' + userId;
+                $this.emit(emitMsg, response);
+            } else {
+                var emitMsg = 'req.' + (userId ? userId : '0') + '.' + (response.name ? response.name : 'anonymous');
+                console.log('[' + $this.client.remotePort + ']', 'received response', emitMsg);
+                $this.emit(emitMsg, response);
+                emitMsg = 'user.' + (userId ? userId : '0');
+                $this.emit(emitMsg, response);
+                emitMsg = 'act.' + (response.name ? response.name : 'anonymous');
                 $this.emit(emitMsg, response);
             }
         });
@@ -103,19 +104,19 @@
         // ping
         $this.lastPing = -1;
         setInterval(function() {
-        $this.ping();
+            //$this.ping();
         }, options.pinginterval);
 
         // load avg
         $this.lastLoadAvg = 0;
         setInterval(function() {
-            $this.avgLoad();
+            //$this.avgLoad();
         }, options.loadinterval);
 
         // request counter
         $this.lastReqCount = 0;
         setInterval(function() {
-            $this.reqCount();
+            //$this.reqCount();
         }, options.reqcountinterval);
     }
     util.inherits(Client, events.EventEmitter);
@@ -157,8 +158,10 @@
             offset = 0;
 
         function writeStr(val, offset) {
-            buf.writeInt32BE(val.length, offset);
-            buf.write(val, offset + 4, val.length);
+            var strVal = String(val);
+            console.log('Parameter', strVal);
+            buf.writeInt32BE(strVal.length, offset);
+            buf.write(strVal, offset + 4, strVal.length);
 
             return offset + 4 + val.length;
         }
@@ -181,7 +184,7 @@
 
         var sendBuffer = buf.slice(0, offset);
 
-        console.log('send request', action);
+        console.log('[' + this.client.remotePort + ']', 'send request', action);
         this.client.write(sendBuffer);
     };
 

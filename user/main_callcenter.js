@@ -23,6 +23,10 @@
         window.offermod.addOffer(data.offer);
     });
 
+    socket.on('order', function(data) {
+        window.offermod.setOrdered(data.offer, data.order);
+    });
+
     socket.once('ready', function() {
         socket.emit('customers init', {});
         socket.emit('offers init', {});

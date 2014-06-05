@@ -80,6 +80,11 @@ mps.on('connection', function (socket) {
         roundRobinSend(userId, 'NEW_OFFER', [data.customer, data.element]);
     });
 
+    socket.on('offer to order', function(data) {
+        console.log('data', data);
+        roundRobinSend(userId, 'OFFER_TO_ORDER', [data.offer])
+    });
+
     instances.forEach(function(client) {
 
         client.on('err.' + userId, function(response) {
@@ -137,6 +142,16 @@ mps.on('connection', function (socket) {
                     element: response.params[2],
                     order: -1
                 }
+            });
+        });
+
+        client.on('act.new_order', function(response) {
+            socket.emit('order', {
+                order : response.params[0],
+                offer : response.params[1],
+                orderDate : response.params[2],
+                shippingDate : response.params[3],
+                invoiceDate : response.params[4]
             });
         });
     });
