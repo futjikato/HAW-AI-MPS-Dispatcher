@@ -25,11 +25,17 @@
 
     socket.on('order', function(data) {
         window.offermod.setOrdered(data.offer, data.order);
+        window.ordermod.addOrder(data);
+    });
+
+    socket.on('orders', function(data) {
+        window.ordermod.init(data.orders);
     });
 
     socket.once('ready', function() {
         socket.emit('customers init', {});
         socket.emit('offers init', {});
+        socket.emit('orders init', {});
         console.log('should have send inits');
     });
 })(window);

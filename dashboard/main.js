@@ -21,6 +21,16 @@
     }
 
     var socket = io('http://localhost:8078/monitor');
+
+    $('#system-add-form').on('submit', function(e) {
+        e.preventDefault();
+
+        var data = $(this).serializeArray();
+        console.log(data);
+        socket.emit('add instance', data);
+    });
+
+
     socket.on('ping', function (data) {
         addInstance(data.id);
         console.log(data);

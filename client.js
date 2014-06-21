@@ -10,40 +10,27 @@
         events.EventEmitter.call($this);
         $this.ready = false;
         $this.id = connection.id;
+        $this.options = options;
+
+        $this.doConnect(connection);
+    }
+    util.inherits(Client, events.EventEmitter);
+
+    Client.prototype.doConnect = function(connection) {
+        var $this = this;
+        console.log('Initiate client', connection);
         $this.client = net.connect(connection.port, connection.host, function() {
             $this.ready = true;
-			// // ping
-			// $this.lastPing = -1;
-			// setInterval(function() {
-            // $this.ping();
-			// }, options.pinginterval);
-
-			// // load avg
-			// $this.lastLoadAvg = 0;
-			// setInterval(function() {
-            // $this.avgLoad();
-			// }, options.loadinterval);
+            $this.connectionReady();
         });
-		
-		$this.client.on('error', function(){
-			// setTimeout(function(){
-				// $this.client = net.connect(connection.port, connection.host, function() {
-					// $this.ready = true;
-					// // ping
-					// $this.lastPing = -1;
-					// setInterval(function() {
-					// $this.ping();
-					// }, options.pinginterval);
 
-					// // load avg
-					// $this.lastLoadAvg = 0;
-					// setInterval(function() {
-					// $this.avgLoad();
-					// }, options.loadinterval);
-				// });
-			// }, 10000);
-			// require('./starter').start(connection.port, options.mainpath)
-		});
+        $this.client.on('error', function(){
+            $this.ready = false;
+            console.log('Connection failed. Retry in 5 sec.', connection);
+            setTimeout(function(){
+                $this.doConnect(connection);
+            }, 5000);
+        });
 
         $this.client.on('data', function(buf) {
             var response = {},
@@ -100,26 +87,29 @@
                 $this.emit(emitMsg, response);
             }
         });
+    };
+
+    Client.prototype.connectionReady = function() {
+        var $this = this;
 
         // ping
         $this.lastPing = -1;
-        setInterval(function() {
-            //$this.ping();
-        }, options.pinginterval);
+        $this.pingInterval = setInterval(function() {
+            $this.ping();
+        }, $this.options.pinginterval);
 
         // load avg
         $this.lastLoadAvg = 0;
-        setInterval(function() {
-            //$this.avgLoad();
-        }, options.loadinterval);
+        $this.loadInterval = setInterval(function() {
+            $this.avgLoad();
+        }, $this.options.loadinterval);
 
         // request counter
         $this.lastReqCount = 0;
-        setInterval(function() {
-            //$this.reqCount();
-        }, options.reqcountinterval);
-    }
-    util.inherits(Client, events.EventEmitter);
+        $this.reqCountInterval = setInterval(function() {
+            $this.reqCount();
+        }, $this.options.reqcountinterval);
+    };
 
     Client.prototype.ping = function(){
         var start = Date.now(),

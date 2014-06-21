@@ -15,31 +15,49 @@ config.instances.forEach(function(clientObj) {
 var monitor = io.of('/monitor'),
     mps = io.of('/mps');
 
+function initClientMessages(client) {
+    // emit ping for instance
+    client.on('msg.ping', function(data) {
+        monitor.emit('ping', {
+            id: client.getId(),
+            ping: data.ping
+        });
+    });
+
+    // emit svg load
+    client.on('msg.load', function(data) {
+        monitor.emit('load', {
+            id: client.getId(),
+            load : data.load
+        });
+    });
+
+    // emit req count
+    client.on('msg.reqcount', function(data) {
+        monitor.emit('reqcount', {
+            id: client.getId(),
+            count : data.count
+        });
+    });
+}
+
+// instance updates
+instances.forEach(function(client) {
+    initClientMessages(client);
+});
+
 monitor.on('connection', function (socket) {
-    instances.forEach(function(client) {
-        // emit ping for instance
-        client.on('msg.ping', function(data) {
-            socket.emit('ping', {
-                id: client.getId(),
-                ping: data.ping
-            });
+    // instance management
+    socket.on('add instance', function(formData) {
+        var connectionObject = {};
+        formData.forEach(function(tupel) {
+            console.log(tupel);
+            connectionObject[tupel.name] = tupel.value;
         });
 
-        // emit svg load
-        client.on('msg.load', function(data) {
-            socket.emit('load', {
-                id: client.getId(),
-                load : data.load
-            });
-        });
-
-        // emit req count
-        client.on('msg.reqcount', function(data) {
-            socket.emit('reqcount', {
-                id: client.getId(),
-                count : data.count
-            });
-        });
+        var client = new Client(connectionObject, config.options);
+        initClientMessages(client);
+        instances.push(client);
     });
 });
 
@@ -71,6 +89,9 @@ mps.on('connection', function (socket) {
     });
     socket.on('offers init', function() {
         roundRobinSend(userId, 'GET_OFFERS', []);
+    });
+    socket.on('order init', function(){
+        roundRobinSend(userId, 'GET_ORDERS', []);
     });
 
     socket.on('customer new', function(data) {
@@ -149,9 +170,11 @@ mps.on('connection', function (socket) {
             socket.emit('order', {
                 order : response.params[0],
                 offer : response.params[1],
-                orderDate : response.params[2],
-                shippingDate : response.params[3],
-                invoiceDate : response.params[4]
+                customername : response.params[2],
+                elementname : response.params[3],
+                orderDate : response.params[4],
+                shippingDate : response.params[5],
+                invoiceDate : response.params[6]
             });
         });
     });
